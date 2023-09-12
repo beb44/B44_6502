@@ -69,10 +69,12 @@ def writeEEprom(fn):
     print n,
     ser.write(n+'\r') ## write cuurent srecord
     s = ser.read()
-    #print s
     while (s != '>'):
-      #print s,
       s = ser.read()
+    ser.write(n.replace("S1","R1")+'\r')
+    s = ser.read()
+    while (s != '>'):
+     s = ser.read()
       
 def readEEprom(start,stop):
   res= '';
@@ -128,19 +130,4 @@ else:
   print "stop : ",stop
   readEEprom(start,stop)
   
-  None
-exit(0)    
-for n in fi.readlines():
-  if args.r: 
-    print 'R'+n[1:]
-  print '----',n
-  if args.r:
-    ser.write('R'+n[1:]+'\r')
-  else:
-    ser.write(n+'\r')
-  s = ser.read()
-  while (s != '>'):
-    print s,
-    s = ser.read()
-  print
     
