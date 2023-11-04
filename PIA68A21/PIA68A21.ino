@@ -1,3 +1,11 @@
+// PPPP   III    A
+// P   P   I    A A
+// P   P   I   A   A
+// PPPP    I   AAAAA
+// P       I   A   A
+// P       I   A   A
+// P      III  A   A
+
 const byte KEYINT = 2;
 const byte DISPINT = 3;
 //------------------------
@@ -17,6 +25,9 @@ byte keybBufReadP;
 byte keybBufWriteP;
 byte keybBufLen;
 bool keybRegFree;
+
+bool countEnable;
+unsigned long int counter;
 
 //----------------------  -
 // display driver section
@@ -82,6 +93,9 @@ void setup() {
 
   digitalWrite(KEYSTROBE,LOW);
   pinMode(KEYSTROBE,OUTPUT);
+
+  countEnable = false;
+  counter = 0;
 
   // initialise serial port
   Serial.begin(9600);
@@ -209,20 +223,35 @@ void loop() {
   {
     
     char c =  dataIn();
-    if (c == '\r')
+    if (countEnable) counter++;
+    switch (c)
     {
-      Serial.println("");
-      
+      case '\x18':
+        countEnable= true;
+        counter = 0;
+        dataOut('\x18');   // acknowledge test
+        break;
+      case '\x19':
+        counter--;           // do not count ctrl-y
+        countEnable=false; // end test
+        break;
+      case '\x1a':
+        Serial.print("*** end of test ***");
+        Serial.println(counter,HEX);    
+        break;
+      case '\r':
+        Serial.write('\r');
+        Serial.write('\n');
+        break;
+      default:
+        Serial.write(c);    
     }
-    else 
-      Serial.print(c);
-    Serial.flush();
     // make display ready
     // generate RDA
-    digitalWrite(DISP_READY,LOW);
-    delayMicroseconds(3);
+    //digitalWrite(DISP_READY,LOW);
+    //delayMicroseconds(3);
     digitalWrite(DISP_READY,HIGH);
-    delayMicroseconds(3);
+    delayMicroseconds(1);
     digitalWrite(DISP_READY,LOW);
     
     dispIntHandled++;  // acknowledge interrupt

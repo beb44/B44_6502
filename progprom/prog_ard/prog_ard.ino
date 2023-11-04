@@ -77,14 +77,14 @@ void writeData(unsigned int Addr,byte val)
   digitalWrite(RWB,LOW); // set RWB to low to trigger write
   delayMicroseconds(2);  // Let the chip copy
   digitalWrite(RWB,HIGH);// Perform write
-  delay(1); // rest time
+  delay(10); // rest time
 }
 
 byte readData(unsigned int Addr)
 {
   databusRead;
   setAddr(Addr,LOW); // enable OUTPUT
-  delay(1);          // wait for output to stabalise
+  delay(10);          // wait for output to stabalise
   return getData();
 }
 
