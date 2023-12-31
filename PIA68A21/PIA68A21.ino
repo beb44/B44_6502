@@ -6,6 +6,7 @@
 // P       I   A   A
 // P      III  A   A
 
+String Ident = "PIA serial interface version 2.0 26/11/2023";
 const byte KEYINT = 2;
 const byte DISPINT = 3;
 //------------------------
@@ -61,9 +62,11 @@ void setup() {
   // attach inteerupt pin on rising edge
   pinMode(KEYINT, INPUT);
   attachInterrupt(digitalPinToInterrupt(KEYINT), keyint, FALLING);
+  //attachInterrupt(KEYINT, keyint, FALLING);
 
   pinMode(DISPINT, INPUT);
   attachInterrupt(digitalPinToInterrupt(DISPINT),dispint, FALLING);
+  //attachInterrupt(DISPINT,dispint, FALLING);
 
   
   // Keyboard data register control
@@ -99,11 +102,12 @@ void setup() {
 
   // initialise serial port
   Serial.begin(9600);
-  Serial.println("Session started");
+  Serial.println(Ident);
 }
 
 void dispint()
 {
+  //Serial.println("dispint");
   // register incomming interrupt only
   // all treatement will be done in the
   // background task
@@ -112,6 +116,7 @@ void dispint()
 
 void keyint()
 {
+  //Serial.println("keyint");
   // register incomming interrupt only
   // all treatement will be done in the
   // background task
