@@ -1,0 +1,117 @@
+<!--
+Ce GAL assure les fonctions suivantes
+- Generation du chip select du PIA
+- Generation des registre RS0 et RS1
+- inversion du signal dispint
+- gestion led temoin de fonctionnement.
+
+Chip select
+un signal externe indique la selection d'un Peripherique
+situe dans la zone definie (C000..CFFF)
+la fonction chip select est define par
+  PERFCS = 0 & A7=0 & A6=0 & A5=0 ( soit C000..C01F)
+
+RS1 et RS0
+le signal RS1 defini le port adresse et RS0 le registre associe
+a ce port
+le mapping des registre est
+C000 KBDDATA           
+C010 KDBSTRB  
+C001 DISPDATA
+C011 DISPRDY  
+on voit donc A0 selection le port (RS1)  et A4 le registre (RS0)
+
+Temoin de fonctionnement
+dans une premiere implementation ou choisira led = CS
+-->
+
+<!--
+definition des ports d'entree
+A7      -> 1
+A6      -> 2
+A5      -> 3
+A4      -> 4
+A3      -> 5
+A2      -> 6
+A1      -> 7
+A0      -> 8
+PERFCS  -> 12
+dispint -> 13
+
+definition des ports de sortie
+CSB     -> 19
+RS1     -> 18
+RS0     -> 17
+PB7     -> 16
+LED     -> 15
+
+-->
+
+<GAL TYPE="16V8" SIG="PIArev_2" AC0="0" SYN="1">
+
+<ASSIGN SRC="P1"  NAME="A7"/>
+<ASSIGN SRC="P2"  NAME="A6"/>
+<ASSIGN SRC="P3"  NAME="A5"/>
+<ASSIGN SRC="P4"  NAME="A4"/>
+<ASSIGN SRC="P5"  NAME="A3"/>
+<ASSIGN SRC="P6"  NAME="A2"/>
+<ASSIGN SRC="P7"  NAME="A1"/>
+<ASSIGN SRC="P8"  NAME="A0"/>
+<ASSIGN SRC="P12" NAME="PERFCS"/>
+<ASSIGN SRC="P13" NAME="DISPINT"/>
+
+<!--
+  P19 CSB (active low)
+  PERFCS=0 A7=0 A6=0 A5=0 
+-->
+
+<COMBINE DEST="P19" XOR="0" AC1="0">
+  <LINE NUM="0">
+    <NAND> <PERFCS/> <A7/> <A6/> <A5/> </NAND>
+  </LINE>
+</COMBINE>
+
+<!-- 
+  P18 RS1 (active high)
+  A0
+-->
+<COMBINE DEST="P18" XOR="1" AC1="0">
+  <LINE NUM="0">
+    <AND> <A0/> </AND>
+  </LINE>
+</COMBINE>
+  
+<!-- 
+  P17 RS0 (active high)
+  A4
+-->
+<COMBINE DEST="P17" XOR="1" AC1="0">
+  <LINE NUM="0">
+    <AND> <A4/> </AND>
+  </LINE>
+</COMBINE>  
+
+<!-- 
+  P16 PB7 (active high)
+  inv(DISPINT)
+-->
+<COMBINE DEST="P16" XOR="1" AC1="0">
+  <LINE NUM="0">
+    <NAND> <DISPINT/> </NAND>
+  </LINE>
+</COMBINE>
+
+<!--
+  P15 CSB (active high)
+  PERFCS=0 A7=0 A6=0 A5=0 
+-->
+
+<COMBINE DEST="P15" XOR="1" AC1="0">
+  <LINE NUM="0">
+    <NAND> <PERFCS/> <A7/> <A6/> <A5/> </NAND>
+  </LINE>
+</COMBINE>
+</GAL>
+
+  
+    
