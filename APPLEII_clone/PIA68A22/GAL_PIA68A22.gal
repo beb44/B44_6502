@@ -111,7 +111,13 @@ LED     -> 15
     <NAND> <PERFCS/> <A7/> <A6/> <A5/> </NAND>
   </LINE>
 </COMBINE>
+<!--
+  P12 et P13 port d'entree
+-->  
+<COMBINE DEST="P12" XOR="0" AC1="1">
+</COMBINE>
+<COMBINE DEST="P13" XOR="0" AC1="1">
+</COMBINE>
 </GAL>
-
   
     
